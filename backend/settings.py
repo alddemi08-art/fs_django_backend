@@ -10,12 +10,14 @@ SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     "django-insecure-654sqqmj9yt4qb@$m(7+!$*r!fuk+yz-#3zr2s#6c3$qb)e9#q"
 )
-DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() == "true"
 
-# Allow multiple hosts, comma-separated in env variable
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
+
+# ALLOWED_HOSTS: default to localhost for dev, Render URL for production
 ALLOWED_HOSTS = os.environ.get(
-    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1"
-).split(",")
+    "DJANGO_ALLOWED_HOSTS",
+    "localhost 127.0.0.1 fs-django-backend-2.onrender.com"
+).split()
 
 # ------------------------------
 # Apps
@@ -72,14 +74,17 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # ------------------------------
 # Database
 # ------------------------------
+# Local default is Railway; override with Render env vars in production
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('PGNAME', 'railway'),
-        'USER': os.environ.get('PGUSER', 'postgres'),
-        'PASSWORD': os.environ.get('PGPASSWORD', 'hVzZeJlXMoUECQJzEtILlnLoJgVryDNx'),
-        'HOST': os.environ.get('PGHOST', 'shuttle.proxy.rlwy.net'),
-        'PORT': os.environ.get('PGPORT', '18727'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("PGNAME", "railway"),
+        "USER": os.environ.get("PGUSER", "postgres"),
+        "PASSWORD": os.environ.get(
+            "PGPASSWORD", "hVzZeJlXMoUECQJzEtILlnLoJgVryDNx"
+        ),
+        "HOST": os.environ.get("PGHOST", "shuttle.proxy.rlwy.net"),
+        "PORT": os.environ.get("PGPORT", "18727"),
     }
 }
 
@@ -104,7 +109,7 @@ USE_TZ = True
 # ------------------------------
 # Static & Media
 # ------------------------------
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 MEDIA_URL = '/images/'
 MEDIA_ROOT = BASE_DIR / 'static/images'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -112,8 +117,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ------------------------------
 # CORS
 # ------------------------------
-# Reads from env variable, comma-separated
 CORS_ALLOWED_ORIGINS = os.environ.get(
     "CORS_ALLOWED_ORIGINS",
-    "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174"
-).split(",")
+    "http://localhost:5173 http://127.0.0.1:5173 http://localhost:5174 http://127.0.0.1:5174 https://demitime.netlify.app"
+).split()
